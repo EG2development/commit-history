@@ -124,6 +124,8 @@ checklist looks for, and each one names the original author of the visual where 
   tracker.
 - [`CITATION.cff`](CITATION.cff) makes GitHub's "Cite this repository" cite the ORCA visual by
   Nadieh Bremer as well as this project.
+- [`ACCESSIBILITY.md`](ACCESSIBILITY.md), GitHub's optional accessibility page, states what the
+  site does, the barriers inside the canvas chart and the text alternatives for them.
 
 On the pilot repository GitHub's community profile reported every item added on
 5 November 2026.
