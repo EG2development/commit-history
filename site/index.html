@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Commit history</title>
+    <meta name="description" content="An interactive visualisation of every commit in the repositories of a GitHub organisation">
+    <meta name="theme-color" content="#64d6d3">
+
+    <!-- Styling: chart.css is required by the visual, the other two style this page -->
+    <link rel="stylesheet" href="css/chart.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/awesomplete.css">
+
+    <!-- Fonts are served from fonts/ (declared in css/style.css); the page makes no third-party requests -->
+
+    <!-- Libraries -->
+    <script src="lib/d3.v7.js"></script>
+    <script src="lib/seedRandom.min.js"></script>
+    <script src="lib/awesomplete.min.js"></script>
+
+    <!-- The visual from https://github.com/nbremer/ORCA (MPL-2.0); its header lists the two changes made here -->
+    <script src="createORCAVisual.js"></script>
+    <!-- The visual reads this page-level constant when it draws text; the upstream page defines it the same way -->
+    <script>const FONT_FAMILY = "Atkinson Hyperlegible";</script>
+</head>
+<body>
+    <div id="chart-wrapper">
+        <div id="chart-introduction">
+            <div id="chart-introduction-content">
+                <div id="chart-title">
+                    <p id="org-kicker">Commit history of <span id="org-name" class="repository">…</span></p>
+                    <h1>All <span class="commit-num"></span>commits made for</h1>
+                    <h1><span id="title-repo-name" class="repository">…</span></h1>
+                    <p id="last-commit-date"></p>
+                    <label id="repo-select-label" for="repo-select">Switch repository</label>
+                    <select id="repo-select" aria-label="Choose the repository to show"></select>
+                </div>
+                <div id="chart-intro-text">
+                    <p><span id="intro-lead">The <span class="repo-name repository">…</span> repository has been shaped by its contributors</span> since the first commit<span id="first-commit-date"></span>. <strong>The visualisation below shows all <span class="commit-num"></span>commits on <span id="intro-branch">its default branch</span> since then.</strong></p>
+
+                    <p>Each commit is a small circle, grouped by the month it was committed. Quiet months are small clusters; busy months grow into large ones.</p>
+
+                    <p id="highlight-note">Commits by <strong>highlighted contributors</strong> are drawn as hexagons. In this dataset those are <span id="highlight-label">…</span>.</p>
+
+                    <p id="interaction-note"><b>Hover</b> over a circle for the commit's details and to light up every other commit by the same author (matched on author name). <b>Click</b> a circle to keep that author's commits highlighted; click anywhere else to reset. Below the visual you can <b>search</b> for a contributor by name.</p>
+                </div>
+            </div>
+
+            <div id="chart-explanation">
+                <p class="header"><strong>HOW TO READ THIS VISUAL</strong></p>
+                <div class="legend-row">
+                    <img class="legend" src="img/legend_insertions.png" alt="Circles with a turquoise outer ring have more line insertions than deletions">
+                    <img class="legend" src="img/legend_deletions.png" alt="Circles with a pink outer ring have more line deletions than insertions">
+                    <img class="legend" src="img/legend_similar.png" alt="Dark blue circles have about the same number of insertions and deletions">
+                    <img class="legend" src="img/legend_no_change.png" alt="A small yellow circle is a commit where no lines were changed, such as a merge commit">
+                </div>
+                <p id="legend-note"><span class="insertions">⏺</span> <b>Note</b> | Size does not scale <i>completely</i> linearly with the number of lines changed <span class="deletions">⏺</span></p>
+                <div class="legend-row">
+                    <img class="legend" src="img/legend_version.png" alt="A coloured ring around a commit shows a version release (a tag containing v followed by a digit)">
+                    <figure id="highlight-legend" class="legend legend-figure">
+                        <figcaption>Type of contributor</figcaption>
+                        <svg viewBox="0 0 300 110" role="img" aria-label="Hexagons are commits from highlighted contributors; circles are commits from other contributors">
+                            <g transform="translate(70,42)">
+                                <polygon points="0,-30 26,-15 26,15 0,30 -26,15 -26,-15" fill="#64d6d3"/>
+                                <polygon points="0,-20 17.3,-10 17.3,10 0,20 -17.3,10 -17.3,-10" fill="#4070c4"/>
+                                <polygon transform="translate(42,-14)" points="0,-12 10.4,-6 10.4,6 0,12 -10.4,6 -10.4,-6" fill="#ea9df5"/>
+                                <polygon transform="translate(42,-14)" points="0,-7 6.1,-3.5 6.1,3.5 0,7 -6.1,3.5 -6.1,-3.5" fill="#4070c4"/>
+                                <circle cx="-38" cy="20" r="3.5" fill="#f2a900"/>
+                            </g>
+                            <g transform="translate(225,42)">
+                                <circle r="30" fill="#ea9df5"/>
+                                <circle r="20" fill="#4070c4"/>
+                                <circle cx="-42" cy="-14" r="12" fill="#64d6d3"/>
+                                <circle cx="-42" cy="-14" r="7" fill="#4070c4"/>
+                                <circle cx="38" cy="20" r="3.5" fill="#f2a900"/>
+                            </g>
+                            <text x="70" y="98" text-anchor="middle" class="legend-text">highlighted contributors</text>
+                            <text x="225" y="98" text-anchor="middle" class="legend-text">other contributors</text>
+                        </svg>
+                    </figure>
+                </div>
+            </div>
+        </div>
+
+        <!-- Loading and interaction message: the visual writes into #loading-message -->
+        <div id="loading">
+            <p id="loading-message">Crunching all the commits...</p>
+        </div>
+
+        <!-- Shown instead of the visual when there is no data -->
+        <div id="empty-state" hidden>
+            <p class="header"><strong>NO DATA YET</strong></p>
+            <p id="empty-state-message"></p>
+            <pre><code>commit-history collect --org &lt;organisation&gt; --output site/data</code></pre>
+        </div>
+
+        <!-- The visual is drawn here; the tooltip has to live inside this container -->
+        <div id="chart-container" role="figure" aria-label="Commit history visualisation: one circle per commit, grouped by month. The repositories table below lists the same data as text.">
+            <div id="tooltip">
+                <div class="tooltip-container">
+                    <span id="tooltip-close">&times;</span>
+                    <p class="tooltip-header">author</p>
+                    <p id="tooltip-author-name">Name</p>
+                    <p class="tooltip-header">committed on</p>
+                    <p id="tooltip-commit-time">February 7, 2024</p>
+                    <p id="tooltip-commit-title"></p>
+                    <p id="tooltip-commit-release-header" class="tooltip-header">release</p>
+                    <p id="tooltip-commit-release">v4.7.09</p>
+                    <p class="tooltip-header">changes made</p>
+                    <p id="tooltip-files-changed" class="tooltip-changes"><span id="tooltip-num-files">3 files</span> changed</p>
+                    <p id="tooltip-commit-changes" class="tooltip-changes"><span id="tooltip-num-insertions">468 insertions</span> <span class="insertions">(+)</span> / <span id="tooltip-num-deletions">263 deletions</span> <span class="deletions">(-)</span></p>
+                    <p class="tooltip-header">commit hash</p>
+                    <p id="tooltip-commit-hash"></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contributor search -->
+        <div id="search-box-outer" class="search-box">
+            <div id="search-box-inner">
+                <p id="search-box-title">Search for a contributor</p>
+                <input id="search-box" class="search-box-input" placeholder="Name..." autocomplete="off">
+            </div>
+        </div>
+
+        <!-- Every repository in the organisation -->
+        <div id="repositories" class="single-column">
+            <p class="header"><strong>REPOSITORIES IN <span class="org-name-text">…</span></strong></p>
+            <p id="repositories-summary"></p>
+            <div class="table-tools">
+                <input id="repo-filter" type="search" placeholder="Filter repositories..." aria-label="Filter repositories by name">
+            </div>
+            <div class="table-scroll">
+                <table id="repo-table" class="repo-table">
+                    <thead><tr></tr></thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Where the data came from -->
+        <div id="data-explanation" class="double-column">
+            <p class="header"><strong>DATA DETAILS</strong></p>
+            <div>
+                <p style="font-weight: 700;">How the data was collected</p>
+                <p id="data-source-text"></p>
+                <p id="data-highlight-text"></p>
+                <p>Only commits reachable from each repository's default branch are included, newest first, which is also what <span class="code">git log</span> walks. Merge commits are drawn as small yellow circles with no line changes, exactly as <span class="code">git log --shortstat</span> reports them, so a pull request merged without squashing counts its lines once, on the individual commits.</p>
+            </div>
+            <div>
+                <p style="font-weight: 700;">Things to keep in mind</p>
+                <p>Author names come straight from the commits. The same person can appear under several names or emails, and hovering highlights by author name only.</p>
+                <p>A commit is drawn as a release when one of its tags contains <span class="code">v</span> followed by a digit, the rule the visual applies. Tags such as <span class="code">1.2.0</span> are listed in the tooltip but not ringed.</p>
+                <p>Line counts come from GitHub, which may leave the number of changed files blank for very large commits; such commits keep their line counts but show no file count.</p>
+                <p>The raw data for the dataset on screen can be downloaded below as CSV.</p>
+            </div>
+        </div>
+
+        <div id="chart-extra">
+            <button id="dataviz-download-data">Download the RAW data</button>
+            <p id="dataviz-credit">
+                Visualisation designed &amp; created by Nadieh Bremer | <a href="https://www.visualcinnamon.com/" target="_blank" rel="noopener">Visual Cinnamon</a>,
+                published as <a href="https://github.com/nbremer/ORCA/tree/main/commit-history" target="_blank" rel="noopener">ORCA commit history</a> under the MPL-2.0 and used here with two additions from its own to-do list: a fade on hover and an animated re-pack.<br>
+                Organisation page, data collector and workflow: <a href="https://github.com/" id="credit-repo-link" target="_blank" rel="noopener">this repository</a>. <a href="THIRD_PARTY_NOTICES.md">Third-party notices</a>.
+            </p>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

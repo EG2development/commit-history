@@ -1,0 +1,12 @@
+# Generated data: contains commit author names and emails, so it is never committed here.
+site/data/*
+!site/data/.gitkeep
+
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+build/
+*.egg-info/
+.DS_Store

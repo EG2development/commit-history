@@ -1,0 +1,123 @@
+# Collect the organisation's commit history and publish the site to GitHub Pages.
+#
+# Runs every Monday and on demand. Nothing is committed: the data is rebuilt on
+# each run and shipped inside the Pages artifact, so author names and emails
+# never land in this repository's history. Emails are left out of the published
+# data unless a manual run sets redact_emails to false.
+#
+# Token, in order of preference:
+#   1. A GitHub App installed on the organisation (variable COMMIT_HISTORY_APP_ID and
+#      secret COMMIT_HISTORY_APP_PRIVATE_KEY): reads private repositories and, with
+#      Members: read, supports --highlight outside/members.
+#   2. A fine-grained personal access token in secret COMMIT_HISTORY_TOKEN.
+#   3. The workflow's own GITHUB_TOKEN: public repositories only, no membership.
+#
+# Repository settings: Pages -> Build and deployment -> Source -> GitHub Actions.
+# In a public repository, scheduled workflows are disabled after 60 days without
+# repository activity; a manual run re-enables them.
+
+name: Commit history site
+
+on:
+  schedule:
+    - cron: "17 6 * * 1"
+  workflow_dispatch:
+    inputs:
+      organisation:
+        description: "GitHub organisation to read (default: this repository's owner)"
+        required: false
+        type: string
+      highlight:
+        description: "Who becomes a hexagon"
+        required: false
+        default: bots
+        type: choice
+        options: [bots, outside, members, none]
+      since:
+        description: "Ignore commits before this date (YYYY-MM-DD, optional)"
+        required: false
+        type: string
+      redact_emails:
+        description: "Leave author and committer emails out of the published data"
+        required: false
+        default: true
+        type: boolean
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.13"
+
+      - name: Mint a GitHub App installation token
+        id: app
+        if: ${{ vars.COMMIT_HISTORY_APP_ID != '' }}
+        uses: actions/create-github-app-token@v3
+        with:
+          app-id: ${{ vars.COMMIT_HISTORY_APP_ID }}
+          private-key: ${{ secrets.COMMIT_HISTORY_APP_PRIVATE_KEY }}
+          owner: ${{ inputs.organisation || github.repository_owner }}
+
+      - name: Collect commit history
+        env:
+          GITHUB_TOKEN: ${{ steps.app.outputs.token || secrets.COMMIT_HISTORY_TOKEN || github.token }}
+          ORGANISATION: ${{ inputs.organisation || github.repository_owner }}
+          HIGHLIGHT: ${{ inputs.highlight || 'bots' }}
+          SINCE: ${{ inputs.since }}
+          REDACT_EMAILS: ${{ inputs.redact_emails }}
+          HOST: ${{ github.server_url }}
+          SITE_REPOSITORY: ${{ github.server_url }}/${{ github.repository }}
+        run: |
+          python -m pip install --quiet .
+          args=(collect --org "$ORGANISATION" --highlight "$HIGHLIGHT" --host "$HOST"
+                --output site/data --clean)
+          if [ -n "$SINCE" ]; then args+=(--since "$SINCE"); fi
+          # Scheduled runs have no inputs: redact unless a manual run explicitly said false
+          if [ "$REDACT_EMAILS" != "false" ]; then args+=(--redact-emails); fi
+          set +e
+          commit-history "${args[@]}"
+          status=$?
+          set -e
+          if [ "$status" -eq 2 ]; then
+            echo "::error::The collector could not run; check the token and the organisation name."
+            exit 2
+          fi
+          if [ "$status" -eq 1 ]; then
+            echo "::warning::Some repositories could not be read. The rest were published; see site/data/index.json."
+          fi
+          python - <<'PY'
+          import json, os, pathlib
+          path = pathlib.Path("site/data/index.json")
+          index = json.loads(path.read_text())
+          index["site_repository"] = os.environ["SITE_REPOSITORY"]
+          path.write_text(json.dumps(index, indent=2, ensure_ascii=False) + "\n")
+          PY
+
+      - uses: actions/configure-pages@v6
+
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v5
