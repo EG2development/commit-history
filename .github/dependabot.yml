@@ -1,0 +1,8 @@
+# Keeps the SHA-pinned actions in .github/workflows/commit-history.yml current.
+# Dependabot updates the commit SHA and the version comment beside it.
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly

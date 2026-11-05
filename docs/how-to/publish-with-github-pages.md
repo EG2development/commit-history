@@ -93,10 +93,10 @@ machine with network access to both and publish by another route.
 - The schedule is `17 6 * * 1` (Mondays, 06:17 UTC); edit the cron line to change it.
 - In a public repository, GitHub disables scheduled workflows after 60 days without repository
   activity; running the workflow by hand re-enables it.
-- The actions are pinned to major versions (`actions/checkout@v7`, `actions/setup-python@v7`,
-  `actions/create-github-app-token@v3`, `actions/configure-pages@v6`,
-  `actions/upload-pages-artifact@v5`, `actions/deploy-pages@v5`). Organisations that require
-  SHA pinning should replace each tag with the commit SHA of that release.
+- Every action is pinned to the full commit SHA of a release, with the version in a comment
+  beside it, because organisation policies that require SHA pinning otherwise refuse the run
+  (the pilot organisation's did). `.github/dependabot.yml` asks Dependabot to update the pins
+  weekly; merge those pull requests to pick up new releases.
 - Large organisations: the collector spends about one GraphQL point and 3 to 4 seconds per
   100 commits, plus one point per repository (mozilla/pdf.js, 24,401 commits, took 14 minutes
   and 273 points on 5 November 2026). It pauses when fewer than 50 points remain in the hourly
