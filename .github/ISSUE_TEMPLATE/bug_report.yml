@@ -1,0 +1,51 @@
+name: Bug report
+description: The collector, the page, the workflow or the documentation does not behave as described.
+title: "bug: "
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for the report. Keep author emails, tokens and real commit data out of it; describe the shape of the data instead.
+        A security problem goes through the security policy (SECURITY.md), not through an issue.
+        A problem in how the chart itself looks or behaves belongs to the ORCA visual by Nadieh Bremer; the issue chooser links to its repository.
+  - type: dropdown
+    id: area
+    attributes:
+      label: Where
+      options:
+        - Collector (commit-history collect or from-git)
+        - Page (site/index.html, site/app.js, styling)
+        - Workflow (GitHub Actions, Pages)
+        - Vendored visual (site/createORCAVisual.js)
+        - Documentation
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: What you did, what you expected and what happened instead. Put commands and error text in code blocks.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: How to reproduce
+      placeholder: |
+        1. commit-history collect --org example --repo api
+        2. Open the page and choose ...
+  - type: input
+    id: versions
+    attributes:
+      label: Versions
+      description: Python version, browser, GitHub (github.com or the Enterprise Server version) and the commit of this repository.
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Checks
+      options:
+        - label: I searched the open issues first.
+          required: true
+        - label: This report contains no author emails, tokens or private commit data.
+          required: true

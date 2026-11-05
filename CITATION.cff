@@ -1,0 +1,41 @@
+# Citation metadata, Citation File Format 1.2.0 (https://citation-file-format.github.io/).
+# GitHub shows it as "Cite this repository". The `references` entry credits the original
+# author of the visual; please keep it when you cite this project.
+cff-version: 1.2.0
+message: >-
+  If you use this software, please cite it as below and also cite the ORCA commit-history
+  visual by Nadieh Bremer that it is built on (listed under references).
+type: software
+title: "GitHub organisation commit history"
+repository-code: "https://github.com/EG2development/commit-history"
+url: "https://eg2development.github.io/commit-history/"
+abstract: >-
+  Collects the commit history of every repository in a GitHub organisation through the
+  GraphQL API and publishes it as an interactive static site built on the ORCA commit-history
+  visual.
+authors:
+  - name: "The github-commit-history contributors"
+license: MIT
+version: 0.1.0
+date-released: "2026-11-05"
+keywords:
+  - github
+  - commit-history
+  - data-visualisation
+  - d3
+  - github-pages
+references:
+  - type: software
+    title: "ORCA: Git Commit History Visual"
+    authors:
+      - family-names: Bremer
+        given-names: Nadieh
+        website: "https://www.visualcinnamon.com/"
+    repository-code: "https://github.com/nbremer/ORCA"
+    url: "https://nbremer.github.io/ORCA/commit-history/"
+    license: MPL-2.0
+    commit: "77745774d9d189818ab1ba27e07979897434abf9"
+    notes: >-
+      site/createORCAVisual.js, site/css/chart.css, site/css/style.css and the legend images
+      come from the commit-history directory of this repository. site/THIRD_PARTY_NOTICES.md
+      lists the changes made to them.

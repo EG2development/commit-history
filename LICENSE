@@ -19,8 +19,3 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-
-This licence covers the Python collector, the site page (site/index.html,
-site/app.js), the workflow, the tests and the documentation. The visual itself
-and the files vendored with it are licensed separately: see
-site/THIRD_PARTY_NOTICES.md.

@@ -27,6 +27,19 @@ The MPL-2.0 is a file-level licence. You may use these files alongside code unde
 another licence, as this project does, provided the MPL-covered files, this notice
 and the licence text stay with the site.
 
+How the original author is credited, so that a later change keeps it:
+
+- The header banner "Visualization designed & developed by Nadieh Bremer" stays at the
+  top of `createORCAVisual.js` and the MPL's Exhibit A notice sits above it; section 3.4
+  of the licence forbids removing or altering such notices, and section 3.1 requires
+  recipients to be told that the file is under the MPL and where to find the text.
+- The page footer names her, links to Visual Cinnamon and to the upstream repository,
+  and says what was changed.
+- `CITATION.cff` lists the visual under `references`, so "Cite this repository" on GitHub
+  cites her work as well as this project.
+- `CONTRIBUTING.md` sends changes to the chart to <https://github.com/nbremer/ORCA> first;
+  this project takes them by re-vendoring the file.
+
 ## D3
 
 - `lib/d3.v7.js`, D3 v7.7.0, copyright 2010-2022 Mike Bostock

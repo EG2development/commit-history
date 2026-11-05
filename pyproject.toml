@@ -7,6 +7,11 @@ requires-python = ">=3.11"
 license = "MIT"
 dependencies = []
 
+[project.urls]
+# The visual in site/ is Nadieh Bremer's ORCA commit-history visual (MPL-2.0); see CONTRIBUTING.md.
+"Upstream visual" = "https://github.com/nbremer/ORCA/tree/main/commit-history"
+"Upstream showcase" = "https://nbremer.github.io/ORCA/commit-history/"
+
 [project.optional-dependencies]
 dev = [
     "pytest>=8.3",

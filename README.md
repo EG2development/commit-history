@@ -20,8 +20,11 @@ seconds for 36 GraphQL points) and against mozilla/pdf.js, the repository the or
 showcases (24,401 commits in 14 minutes for 273 points). On the commits both datasets hold, the
 result matches the original's published data on every author email and release tag and on 95.8%
 of non-merge commits' line counts exactly; the rest differ by git's rename detection, which
-GitHub's diff does not apply. Statements about GitHub in these pages were read from GitHub's
-documentation or checked against its API on that date; both change.
+GitHub's diff does not apply. The workflow was run live the same day from a public repository
+in that organisation with its own token: 10 public repositories, 58 commits, 22 points, emails
+redacted, deployed to GitHub Pages at the first attempt once the actions were SHA-pinned.
+Statements about GitHub in these pages were read from GitHub's documentation or checked against
+its API on that date; both change.
 
 ## What the page shows
 
@@ -99,9 +102,31 @@ viewers' browsers.
 - Two decision records explain the design: [ADR-0004](docs/decisions/0004-collect-organisation-commit-history-through-the-graphql-history-connection.md)
   on reading history through GraphQL rather than cloning, and [ADR-0005](docs/decisions/0005-reuse-the-orca-commit-history-visual-behind-an-organisation-page.md)
   on reusing the visual with only its own stretch goals added.
-- `.venv/bin/python -m pytest` runs 61 tests that need no network; `.venv/bin/ruff check src tests`
+- `.venv/bin/python -m pytest` runs 69 tests that need no network; `.venv/bin/ruff check src tests`
   lints. The GraphQL path was also compared with `git log --shortstat` on a cloned repository:
   every one of its 91 commits agreed on every field.
+
+## Contributing, conduct, security and citation
+
+The repository carries the community health files that GitHub's community standards
+checklist looks for, and each one names the original author of the visual where that matters:
+
+- [`CONTRIBUTING.md`](CONTRIBUTING.md) says who owns which part of the code. Changes to the
+  chart itself go to Nadieh Bremer's [nbremer/ORCA](https://github.com/nbremer/ORCA) first and
+  arrive here by re-vendoring; every other source is credited in its file header and in the
+  third-party notices.
+- [`CODE_OF_CONDUCT.md`](CODE_OF_CONDUCT.md) is the Contributor Covenant 3.0, which counts
+  failing to credit sources among its restricted behaviours.
+- [`SECURITY.md`](SECURITY.md) explains private vulnerability reporting and that a problem in
+  the visual is passed on to the upstream project so that it is fixed at the source.
+- `.github/ISSUE_TEMPLATE/` and `.github/PULL_REQUEST_TEMPLATE.md` ask where a change belongs
+  and whether attribution and notices were kept; the issue chooser links to the upstream
+  tracker.
+- [`CITATION.cff`](CITATION.cff) makes GitHub's "Cite this repository" cite the ORCA visual by
+  Nadieh Bremer as well as this project.
+
+On the pilot repository GitHub's community profile reported every item added on
+5 November 2026.
 
 ## Known limits
 
@@ -113,11 +138,14 @@ viewers' browsers.
 
 ## Licence and attribution
 
-The collector, page script, workflow, tests and documentation are MIT licensed (see
-`LICENSE`). The visual, its chart stylesheet and legend images are copyright Nadieh Bremer,
-Visual Cinnamon, under the Mozilla Public License 2.0, and are listed with the other vendored
-libraries in [`site/THIRD_PARTY_NOTICES.md`](site/THIRD_PARTY_NOTICES.md). The visual's header
-names every function changed: the two stretch goals, and writing text that comes from commits
-with `textContent` instead of `innerHTML`; nothing else in it was touched. The
-Atkinson Hyperlegible font files in `site/fonts` are copyright Braille Institute of America under
-the SIL Open Font License 1.1, so the page makes no third-party requests at all.
+The collector, page script, workflow, tests and documentation are MIT licensed. `LICENSE`
+holds the plain MIT text only, so that GitHub detects the licence; this paragraph and the
+notices file describe the split. The visual, its chart stylesheet and legend images are
+copyright Nadieh Bremer, Visual Cinnamon, under the Mozilla Public License 2.0, and are listed
+with the other vendored libraries in [`site/THIRD_PARTY_NOTICES.md`](site/THIRD_PARTY_NOTICES.md).
+The visual's header keeps her credit banner, carries the MPL's source-code notice, and names
+every function changed: the two stretch goals, and writing text that comes from commits with
+`textContent` instead of `innerHTML`; nothing else in it was touched. The page's footer credits
+her and links to the upstream repository. The Atkinson Hyperlegible font files in `site/fonts`
+are copyright Braille Institute of America under the SIL Open Font License 1.1, so the page
+makes no third-party requests at all.

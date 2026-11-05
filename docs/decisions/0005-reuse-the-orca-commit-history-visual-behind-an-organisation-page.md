@@ -48,4 +48,5 @@ A diff of `site/createORCAVisual.js` against upstream commit `7774577` must show
 ## More Information
 
 * Upstream: <https://github.com/nbremer/ORCA/tree/main/commit-history>, read on 5 November 2026; licence: <https://www.mozilla.org/en-US/MPL/2.0/>.
+* Attribution follows the conventions the community standards expect, so that the original author stays visible wherever the work is reused: the MPL's Exhibit A notice and her header banner in the vendored files (sections 3.1 and 3.4), a credit line on the page, a `references` entry in `CITATION.cff`, an upstream-first rule in `CONTRIBUTING.md`, and a security policy that passes a vulnerability in the visual to the upstream project. The pack's `LICENSE` holds the plain MIT text only, because GitHub detects a licence only from an unmodified text; the split between MIT and MPL-2.0 files is described in the README and `site/THIRD_PARTY_NOTICES.md`.
 * Related: [ADR-0004](0004-collect-organisation-commit-history-through-the-graphql-history-connection.md) covers how the data is collected.

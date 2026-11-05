@@ -1,5 +1,10 @@
+// This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the
+// MPL was not distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
+//
 // Modified copy of https://github.com/nbremer/ORCA/blob/main/commit-history/createORCAVisual.js
-// (upstream commit 7774577, Mozilla Public License 2.0; see LICENSE-ORCA.txt and THIRD_PARTY_NOTICES.md).
+// by Nadieh Bremer, Visual Cinnamon (upstream commit 7774577, Mozilla Public License 2.0; the licence
+// text is in LICENSE-ORCA.txt and the notices in THIRD_PARTY_NOTICES.md). Changes to the visual belong
+// upstream first; see CONTRIBUTING.md.
 //
 // Modifications made for github-commit-history on 5 November 2026, implementing the two stretch goals
 // that the upstream file listed as TODOs:

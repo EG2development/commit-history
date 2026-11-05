@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: The chart itself (ORCA commit-history visual)
+    url: https://github.com/nbremer/ORCA/issues
+    about: The visual is Nadieh Bremer's work. Propose changes to how the chart looks or behaves there first; this project takes them by re-vendoring the file.
+  - name: Security vulnerability
+    url: https://github.com/EG2development/commit-history/security/advisories/new
+    about: Do not open an issue. Use "Report a vulnerability" on this repository's Security tab, as SECURITY.md describes.

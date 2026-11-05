@@ -21,6 +21,18 @@ pages on 5 November 2026.
 2. Copy everything in `github-commit-history/` into it except `.venv/` and `site/data/`, and
    commit. The workflow file must end up at `.github/workflows/commit-history.yml` in the
    repository root.
+3. Make the community files yours. `CODE_OF_CONDUCT.md` and `SECURITY.md` say to write to a
+   maintainer or an organisation owner; replace that with your own channel if you have one.
+   Under **Settings → Code security**, enable **Private vulnerability reporting** so that the
+   **Report a vulnerability** button the security policy refers to exists. Leave the
+   attribution of the visual to Nadieh Bremer, the third-party notices and the `references`
+   entry in `CITATION.cff` as they are: they are the original author's credit, and the MPL-2.0
+   requires the notices.
+4. Give the repository a description, and after the first deploy its website (the Pages URL)
+   and a few topics. **Insights → Community Standards** then shows every item of GitHub's
+   checklist as added; `gh api repos/OWNER/REPO/community/profile` reports the same as
+   `health_percentage`. The pilot repository reached 100 on 5 November 2026 once `LICENSE`
+   held the plain MIT text (GitHub detects a licence only from an unmodified text).
 
 ## 2. Choose how the workflow authenticates
 

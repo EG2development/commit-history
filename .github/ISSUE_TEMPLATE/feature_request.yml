@@ -1,0 +1,41 @@
+name: Feature request
+description: Something the collector, the page, the workflow or the documentation should do.
+title: "feat: "
+labels: [enhancement]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        A change to how the chart itself looks or behaves belongs upstream first, on Nadieh Bremer's ORCA repository (the issue chooser links to it). This project takes such changes by re-vendoring the file.
+  - type: dropdown
+    id: scope
+    attributes:
+      label: Does this change the visual itself?
+      options:
+        - No, it concerns the collector, the page around the chart, the workflow or the documentation
+        - Yes, the chart's look or behaviour, and I have proposed it upstream (link below)
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: The problem
+      description: What you cannot do today, and who it affects.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: The proposal
+      description: What should change, with an example command, page element or data file where possible. Link the upstream issue if the visual is involved.
+    validations:
+      required: true
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Checks
+      options:
+        - label: I searched the open issues first.
+          required: true
+        - label: This request contains no author emails, tokens or private commit data.
+          required: true
